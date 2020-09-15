@@ -1,0 +1,1 @@
+DROP TABLE health_checks;

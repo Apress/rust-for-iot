@@ -1,0 +1,24 @@
+# Install Gexiv2
+## For install on the server ::
+##RUN apt-get install -y libgexiv2-2:armhf
+RUN apt-get install -y libzip-dev
+
+## Exiv2 is required for gexiv2
+RUN wget https://www.exiv2.org/builds/exiv2-0.27.2-Source.tar.gz
+RUN tar -xf exiv2-0.27.2-Source.tar.gz
+RUN ls -al
+RUN cd exiv2-0.27.2-Source/ && \
+    cmake -DEXIV2_BUILD_SAMPLES=no . && \
+    make && \
+    make install
+
+RUN apt-get install -y meson ninja-build
+# Lock to version 0.12.0
+RUN wget https://gitlab.gnome.org/GNOME/gexiv2/-/archive/gexiv2-0.12.0/gexiv2-gexiv2-0.12.0.tar.gz
+RUN tar -xvf gexiv2-gexiv2-0.12.0.tar.gz
+RUN ls -al
+RUN cd gexiv2-gexiv2-0.12.0 && \
+    meson build && \
+    ninja -C build && \
+    ninja -C build install
+

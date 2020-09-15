@@ -1,0 +1,8 @@
+
+# This is only used internally
+ingress:
+  enabled: false
+# we dont need a host cuase we will use the cluster route
+
+persistence:
+  enabled: true

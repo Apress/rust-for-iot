@@ -1,0 +1,52 @@
+
+
+# Only needed for dry run runs
+useSecret: true
+
+# Our Ingress Configuration
+ingress:
+  enabled: true
+  host: www.rust.iot
+
+# Configuration for various services
+# tag::upload[]
+services:
+  upload:
+    image:
+      repository: local/upload_svc
+      tag: latest
+      pullPolicy: Never
+    replicaCount: 2
+    type: ClusterIP
+    port: 3001
+    host: 0.0.0.0
+    resources: {}
+# end::upload[]
+
+  mqtt:
+    image:
+      repository: local/mqtt_svc
+      tag: latest
+      pullPolicy: Never
+    replicaCount: 1
+    type: ClusterIP
+    port: 3010
+    ssl: 8883
+    host: 0.0.0.0
+    resources: {}
+
+  retrieval:
+    image:
+      repository: local/retrieval_svc
+      tag: latest
+      pullPolicy: Never
+    replicaCount: 2
+    type: ClusterIP
+    port: 3000
+    rpc: 5555
+    host: 0.0.0.0
+    resources_rpc: {}
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi

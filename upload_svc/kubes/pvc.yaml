@@ -1,0 +1,33 @@
+
+# tag::pv[]
+apiVersion: v1
+kind: PersistentVolume    # <1>
+metadata:
+  name: upload-iot-volume
+  namespace: iot
+spec:
+  capacity:
+    storage: 1Gi          # <2>
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: /tmp/iot/download   # <3>
+# end::pv[]
+---
+# tag::pvc[]
+apiVersion: v1
+kind: PersistentVolumeClaim     # <1>
+metadata:
+  name: upload-iot-volume-claim # <2>
+  namespace: iot
+spec:
+  accessModes:
+      - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
+# end::pvc[]

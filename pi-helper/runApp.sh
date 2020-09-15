@@ -1,0 +1,1 @@
+./rasp-app --backend http://iot-backend:3001

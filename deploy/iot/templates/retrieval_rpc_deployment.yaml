@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "retrieval_rpc.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "retrieval_rpc.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "retrieval_rpc.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "retrieval_rpc.fullname" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "retrieval_rpc.fullname" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.services.retrieval.image.repository }}:{{ .Values.services.retrieval.image.tag }}"
+        imagePullPolicy: {{ .Values.services.retrieval.image.pullPolicy }}
+        # tag::rpc[]
+        command: ["./retrieval_svc", "--", "rpc"]
+        ports:
+        - name: rpc
+          containerPort: {{ .Values.services.retrieval.rpc }}
+          protocol: TCP
+        # end::rpc[]
+        livenessProbe:
+          tcpSocket:
+            port: rpc
+          initialDelaySeconds: 3
+        readinessProbe:
+          tcpSocket:
+            port: rpc
+          initialDelaySeconds: 3
+        env:
+        - name: SERVER_ADDR
+          value: "{{ .Values.services.retrieval.host }}"
+        - name: RPC
+          value: "{{ .Values.services.retrieval.rpc }}"
+        # tag::db[]
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "iot.fullname" . }}
+              key: databaseUrl
+        # end::db[]
+        resources:
+          {{- toYaml .Values.services.retrieval.resources_rpc | nindent 12 }}

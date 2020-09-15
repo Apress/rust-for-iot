@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+# tag::meta[]
+kind: StatefulSet
+metadata:
+  name: {{ template "upload.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "upload.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "upload.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+# end::meta[]
+spec:
+# tag::match[]
+  selector:
+    matchLabels:
+      app: {{ template "upload.fullname" . }}
+      release: {{ .Release.Name }}
+# end::match[]
+  serviceName: {{ template "upload.fullname" . }}
+  replicas: {{ .Values.services.upload.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "upload.fullname" . }}
+        release: {{ .Release.Name }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      # tag::container[]
+      containers:
+      - name: upload-service
+        image: "{{ .Values.services.upload.image.repository }}:{{ .Values.services.upload.image.tag }}"   # <1>
+        imagePullPolicy: {{ .Values.services.upload.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.services.upload.port }}   # <2>
+          name: web
+        volumeMounts:
+        - name: upload
+          mountPath: /tmp/iot/download
+        env:
+        - name: SERVER_ADDR
+          value: "{{ .Values.services.upload.host }}" # <3>
+        - name: PORT
+          value: "{{ .Values.services.upload.host }}"
+        - name: RETRIEVAL_URL
+          value: "http://{{ template "retrieval.name" }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.retrieval.port }}"  # <4>
+        livenessProbe:      # <5>
+          tcpSocket:
+            port: web
+          initialDelaySeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: web
+            initialDelaySeconds: 3
+        resources:            # <6>
+          {{- toYaml .Values.services.upload.resources | nindent 12 }}
+      # end::container[]
+  # Creates a new PVC for each one
+  # Scaling them or deleting a SS wont delete the volumes by default thy are created
+  volumeClaimTemplates:
+  - metadata:
+      name: upload
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

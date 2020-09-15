@@ -1,0 +1,155 @@
+[package]
+name = "retrieval_svc"
+version = "0.1.0"
+authors = ["Joseph Nusairat <joseph@nusairat.com>"]
+edition = "2018"
+build = "build.rs"
+
+[features]
+chapter5 = ["cqrs","ch05"]
+full = ["cqrs","auth"]
+# GraphQL with database interactions
+#cqrs = ["eventsourcing", "eventsourcing-derive", "eventstore"]
+cqrs =[]
+auth = []
+
+ch04 = []
+ch05 = ["cqrs"]
+ch06 = []
+#default = ["full"]
+
+[build-dependencies]
+capnpc = "0.12.1"
+
+[dependencies]
+# GraphQL
+# tag::juniper1[]
+juniper = "0.14.2"
+juniper_iron = "0.6.2"
+# end::juniper1[]
+
+# CQRS
+# tag::event[]
+eventsourcing = { version = "0.1.5", features = ["orgeventstore"], git = "https://github.com/nusairat/eventsourcing.git" }
+eventsourcing-derive = "0.1.3"
+
+## For the event store database
+eventstore = "0.7.4"
+# end::event[]
+
+# For the website
+iron = "0.6.1"
+#tag::router[]
+router = "0.6.0"
+#end::router[]
+# tag::bodyparser[]
+persistent = "0.4.0"
+bodyparser = "0.8.0"
+# end::bodyparser[]
+mount = "0.4.0"
+# abilityto easily parse parameters
+# tag::params[]
+params = "0.8.0"
+# end::params[]
+
+## For the iron parser to parse the object to a struct
+serde = "1.0.105"
+serde_json = "1.0.50"
+serde_derive = "1.0.105"
+
+# tag::log[]
+log = "0.4.8"
+pretty_env_logger = "0.4.0"
+env_logger = "0.7.1"
+# end::log[]
+
+# Time for the data
+#chrono = "0.4.6"
+chrono = { version = "0.4.11", features = ["serde"] }
+
+# Diesel  - database access
+# tag::diesel[]
+# Enable Number, this allows us to use big decimal tat we can use in the place fo f64
+# serde_json = needed for using JSONb
+# uuidv07 : needed for higher uuid versions (in the master this was changed to just uuid)
+diesel = { version = "^1.4.4", features = ["postgres", "r2d2", "chrono", "uuidv07", "numeric", "serde_json"] }
+dotenv = "0.15.0"
+# end::diesel[]
+
+## Needed for hte f64
+### Diesel only supports:: bigdecimal >= 0.0.10, < 0.0.15 optional
+bigdecimal = { version =  "0.1.0", features = ["serde"] }
+
+# Geography GIS
+# tag::geo[]
+diesel-geography =  { version = "0.2.0", features = ["serde"] }
+# end::geo[]
+
+# For the postgres connection manager
+r2d2_postgres = "0.16.0"
+
+# For using enums with diesel
+# tag::diesel_enum[]
+diesel-derive-enum = { version = "0.4", features = ["postgres"] }
+# end::diesel_enum[]
+
+# Uuid creation
+# latest is 8, looks like diesel crate is working on updating it, so let them finish
+#uuid = { version =  "^0.7.0", features = ["serde", "v4"] }
+uuid = { version =  "^0.8.0", features = ["serde", "v4"] }
+
+# tag::clap[]
+# Used for Argument Matching And Applications
+clap = "2.33.0"
+# end::clap[]
+
+# For error chaining
+error-chain = "0.12.2"
+
+# Extra dependencies not in crate
+#[dependencies.bodyparser]
+#git = "https://github.com/iron/body-parser.git"
+
+# CAPNP itmes
+capnp = "0.12.1"
+
+# For the Derive foer the Enumerations
+enum-primitive-derive = "0.1.2"
+num-traits = "0.2.11"
+
+# Canpn RC
+capnp-rpc = "0.12.1"
+# tag::tokio[]
+tokio = { version = "0.2.17", features = [ "full" ] }
+futures = "0.3"
+async-std = "1.5"
+# end::tokio[]
+
+# Needed to build the MUSLRust
+openssl = "0.10.28"
+
+# tag::dieselm[]
+# Needed to run diesel migrations
+diesel_migrations = "1.4.0"
+# end::dieselm[]
+
+# For authorization
+# Locked it to the version we are using in Iron
+## Just using this for the Authorization<Beaer> so dont need to update it.
+### Right now code wise are keeping this low
+# tag::alcoholic[]
+hyper = "0.10.16"
+alcoholic_jwt = "1.0.0"
+reqwest = "0.10.4"
+http = "0.2.1"
+# end::alcoholic[]
+
+# tag::middleware[]
+[dependencies.iron_diesel_middleware]
+git = "https://github.com/darayus/iron-diesel-middleware"
+# end::middleware[]
+
+# tag::juniper2[]
+[patch.crates-io]
+juniper = { git = "https://github.com/nusairat/juniper", branch = "v14.2/add-uuid" }
+# end::juniper2[]

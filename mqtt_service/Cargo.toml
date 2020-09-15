@@ -1,0 +1,64 @@
+# tag::build[]
+[package]
+name = "mqtt_service"
+version = "0.1.0"
+authors = ["Joseph Nusairat <joseph@nusairat.com>"]
+edition = "2018"
+build = "build.rs"  # <1>
+
+[features]
+full = []
+ch04 = []
+
+[build-dependencies]
+capnpc = "0.9.3"    # <2>
+# end::build[]
+
+[dependencies]
+# Used for Argument Matching And Applications
+clap = "2.32.0"
+
+# To find relative directory
+shellexpand = "1.1.1"
+
+# For the EQMTT
+# tag::rum[]
+# Used to generate the name of the connection
+sys-info = "0.6.0"
+rumqtt = { version =  "^0.31", features = ["chrono"] }
+# end::rum[]
+
+# For the website
+iron = "0.6.*"
+mount = "0.4.0"
+router = "0.6.0"
+
+log = "0.4.5"
+pretty_env_logger = "0.3"
+
+regex = "1"
+lazy_static = "1.2.0"
+
+uuid = { version =  "^0.7.x", features = ["v4", "serde"] }
+
+# Serialize / desieralize
+serde = { version =  "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+
+## For our random number creator
+rand = "0.6"
+
+# tag::cap[]
+# CANPNP
+capnp = "0.9.4" # <1>
+
+# For the Derive foer the Enumerations
+enum-primitive-derive = "0.1.2"     # <2>
+num-traits = "0.2"
+
+# Canpn RC
+capnp-rpc = "0.9.0"     # <3>
+tokio = "0.1.18"
+futures = "0.1.25"
+# end::cap[]

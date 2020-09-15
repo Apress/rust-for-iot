@@ -1,0 +1,99 @@
+# tag::mqtt[]
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "mqtt.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "mqtt.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "mqtt.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  type: {{ .Values.services.mqtt.type }}
+  ports:
+  - port: {{ .Values.services.mqtt.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ template "mqtt.fullname" . }}
+    release: {{ .Release.Name }}
+# end::mqtt[]
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "upload.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "upload.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "upload.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  type: {{ .Values.services.upload.type }}
+  ports:
+  - port: {{ .Values.services.upload.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ template "upload.fullname" . }}
+    release: {{ .Release.Name }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "retrieval.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "retrieval.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "retrieval.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  type: {{ .Values.services.retrieval.type }}
+  ports:
+  - port: {{ .Values.services.retrieval.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ template "retrieval.fullname" . }}
+    release: {{ .Release.Name }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "retrieval_rpc.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "retrieval_rpc.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "retrieval_rpc.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  type: {{ .Values.services.retrieval.type }}
+  ports:
+  - port: {{ .Values.services.retrieval.rpc }}
+    targetPort: rpc
+    protocol: TCP
+    name: rpc
+  selector:
+    app: {{ template "retrieval_rpc.fullname" . }}
+    release: {{ .Release.Name }}
+

@@ -1,0 +1,16 @@
+namespace: iot
+
+image: devrealm/emqtt
+
+persistence:
+  enabled: true
+
+emqxConfig:
+  EMQ_LISTENER__SSL__EXTERNAL__KEYFILE: "\/etc\/ssl\/certs\/EmqttIot.key"
+  EMQ_LISTENER__SSL__EXTERNAL__CERTFILE: "\/etc\/ssl\/certs\/EmqttIot.pem"
+  EMQ_LISTENER__SSL__EXTERNAL__CACERTFILE: "\/etc\/ssl\/certs\/RustIOTRootCA.pem"
+  EMQ_LISTENER__SSL__EXTERNAL__VERIFY: verify_peer
+  EMQ_LISTENER__SSL__EXTERNAL__FAIL_IF_NO_PEER_CERT: true
+  EMQ_LOG_LEVEL: debug
+  EMQ_ADMIN_PASSWORD: your_password
+

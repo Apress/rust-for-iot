@@ -1,0 +1,1 @@
+./rasp-pi-mq --server iot-backend --root-ca RustIOTRootCA.pem --client-ca PiDevice.pem --client-key PiDevice.key

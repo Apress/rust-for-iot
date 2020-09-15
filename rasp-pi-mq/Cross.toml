@@ -1,0 +1,7 @@
+# Custom Library with Authenticator in it
+[target.armv7-unknown-linux-gnueabihf]
+image = "capnp-ubuntu:gnu"
+
+#[target.armv7-unknown-linux-musleabihf]
+#image = "opencv:musl"
+#

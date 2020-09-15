@@ -1,0 +1,8 @@
+# Custom Library with Authenticator in it
+# We use the first one
+[target.armv7-unknown-linux-gnueabihf]
+image = "opencvs-auth:musl2"
+
+[target.armv7-unknown-linux-musleabihf]
+image = "opencv:musl"
+

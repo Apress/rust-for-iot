@@ -1,0 +1,8 @@
+./.gitignore
+.git
+Dockerfile
+README.md
+.idea
+target
+*.iml
+deploy

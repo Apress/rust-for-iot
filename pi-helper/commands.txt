@@ -1,0 +1,8 @@
+
+Remember use 0.0.0.0 to start
+
+http http://iot-backend:3005/recording/:id/:type/:camera
+
+http POST http://iot-backend:3005/api/recording/7a386bec-54d4-4479-b6ab-84c8f615a64e/stop/7a386bec-54d4-4479-b6ab-84c8f615a64e
+
+http GET http://iot-backend:3005/api/healthz

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-svc-np
+  namespace: iot
+  labels:
+    app: upload_service
+spec:
+  # Create a cluster IP without n actual IP address for it
+  #clusterIP: None
+  selector:
+    app: upload-service-ss
+  type: NodePort          # <1>
+  ports:
+  # needs to be the port running on the deployment/SS
+  - port: 3001
+    nodePort: 30001     # <2>
+    targetPort: 3001    # <3>

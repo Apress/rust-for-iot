@@ -1,0 +1,25 @@
+apiVersion: apps/v1 # <1>
+kind: Deployment  # <2>
+metadata:
+  name: upload-dep-basic  # <3>
+  namespace: iot
+spec:
+  selector:
+    matchLabels:    # <4>
+      app: upload-service # has to match .spec.template.metadata.labels
+  replicas: 1   # <5>
+  template:
+    metadata:
+      labels:     # <6>
+        app: upload-service # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:       # <7>
+      - name: upload-service
+        image: local/upload_svc:latest  # <8>
+        # Needed for the docker for desktop use
+        # https://github.com/kubernetes/kubernetes/issues/1293#issuecomment-357326426
+        imagePullPolicy: Never  # <9>
+        ports:
+        - containerPort: 3001   # <10>
+          name: web

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "mqtt.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "mqtt.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "mqtt.name" . }}
+    app.kubernetes.io/managed-by: tiller
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "mqtt.fullname" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "mqtt.fullname" . }}
+        release: {{ .Release.Name }}
+    spec:
+      # tag::svc[]
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.services.mqtt.image.repository }}:{{ .Values.services.mqtt.image.tag }}"
+        imagePullPolicy: {{ .Values.services.mqtt.image.imagePullPolicy }}
+        command: ["./mqtt_service"]
+        ports:
+        - name: http
+          containerPort: {{ .Values.services.mqtt.port }}
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: http
+          initialDelaySeconds: 3
+        readinessProbe:
+          tcpSocket:
+            port: http
+          initialDelaySeconds: 3
+        env:
+        - name: HTTP_SERVER_ADDR
+          value: "{{ .Values.services.mqtt.host }}"
+        - name: HTTP_PORT
+          value: "{{ .Values.services.mqtt.port }}"
+        - name: CLIENT_CRT
+          value: "/etc/secrets/client.crt"    # <1>
+        - name: CLIENT_KEY
+          value: "/etc/secrets/client.key"
+        - name: ROOT_CA
+          value: "/etc/secrets/root.ca"
+        - name: SERVER_ADDR
+          value: "{{ .Values.services.mqtt.host }}"
+        - name: PORT
+          value: "{{ .Values.services.mqtt.ssl }}"
+        - name: RPC_SERVER
+          value: "{{ template "retrieval_rpc.name" }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.retrieval.rpc }}"
+        - name: RPC_PORT
+          value: "{{ .Values.services.retrieval.rpc }}"
+        volumeMounts:
+          - mountPath: "/etc/secrets"   # <2>
+            name: certs
+            readOnly: true
+        resources:
+          {{- toYaml .Values.services.mqtt.resources | nindent 12 }}
+      volumes:
+      - name: certs                     # <3>
+        secret:
+          secretName: {{ template "iot.fullname" . }}
+# end::svc[]

@@ -1,0 +1,44 @@
+# tag::ss[]
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  ##  Cannot use _ has to be just a dash
+  name: upload-ss
+  namespace: iot
+spec:
+  selector:
+    matchLabels:
+      app: upload-service-ss # has to match .spec.template.metadata.labels
+  serviceName: "upload-svc"
+  replicas: 2 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: upload-service-ss # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: upload-service
+        image: local/upload_svc:latest
+        # Needed for the docker for desktop use
+        # https://github.com/kubernetes/kubernetes/issues/1293#issuecomment-357326426
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3001
+          name: web
+# end::ss[]
+# tag::vm[]
+        volumeMounts:
+        - name: upload
+          mountPath: /tmp/iot/download
+  # Creates a new PVC for each one
+  # Scaling them or deleting a SS wont delete the volumes by default thy are created
+  volumeClaimTemplates:
+  - metadata:
+      name: upload
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+# end::vm[]

@@ -1,0 +1,64 @@
+[package]
+name = "upload_svc"
+version = "0.1.0"
+authors = ["Joseph Nusairat <joseph@nusairat.com>"]
+edition = "2018"
+
+[features]
+full = []
+ch02 = []
+
+[dependencies]
+# Loggers
+log = "0.4"
+pretty_env_logger = "0.4"
+env_logger = "0.7.1"
+
+iron = "0.6.1"
+router = "0.6.0"
+mount = "0.4.0"
+# abilityto easily parse parameters
+params = "0.8.0"
+
+# Hyper is in iron
+hyper = "0.13"
+
+# Conver for easy slash use
+path-slash = "0.x"
+
+# For S3
+#rusoto_s3 = "0.37.0"
+
+# tag::multipart[]
+# For file uploading
+multipart = { version = "0.16.1", features = ["iron"] }
+# end::multipart[]
+
+# For error chaining
+error-chain = "0.12.2"
+
+# Uuid creation
+## Serde needed for the parsers
+uuid = { version =  "0.8.1", features = ["serde", "v4"] }
+
+# Sendign requests
+# tag::reqwest[]
+reqwest = {version =  "0.10.4", features = ["blocking", "json"] }
+http = "0.2.0"
+# end::reqwest[]
+
+# Our serializers / deserializers for the JSON creation
+serde_json = "1.0.50"
+serde = { version = "1.0.105", features = ["derive"] }
+
+## Parsing
+# tag::image[]
+kamadak-exif = "0.5.1"
+chrono = { version = "0.4", features = ["serde"] }
+# end::image[]
+# tag::video[]
+mp4parse = "0.11.2"
+# end::video[]
+
+# Used for Argument Matching And Applications
+clap = "2.32.0"

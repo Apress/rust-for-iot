@@ -1,0 +1,12 @@
+[package]
+name = "extra"
+version = "0.1.0"
+authors = ["Joseph Nusairat <joseph@nusairat.com>"]
+edition = "2018"
+
+[dependencies]
+# t_bang = "0.1.2"
+
+tokio = { version = "0.2.13", features =["full"] }
+tokio-timer = "0.2.13"
+futures = "0.3"

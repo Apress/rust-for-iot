@@ -1,0 +1,13 @@
+[package]
+name = "authentication"
+version = "0.1.0"
+authors = ["Joseph Nusairat <joseph@nusairat.com>"]
+edition = "2018"
+
+[dependencies]
+yup-oauth2 = {git = "https://github.com/nusairat/yup-oauth2.git", branch = "chore/fix-merge-errors"}
+
+tokio = { version = "0.2", features = ["fs", "macros", "io-std", "time"] }
+chrono = "0.4"
+
+log = "0.4"

@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-for-rust-iot
+  namespace: iot
+spec:
+  rules:
+  # can have multiple hosts
+  - host: www.rust.iot    # <1>
+    http:
+      paths:
+      - path: /api      # <2>
+        backend:
+          serviceName: upload-svc-service # <3>
+          servicePort: 3001               # <4>
+      - path: /graph                      # <5>
+          backend:
+            serviceName: retrieval-svc-service
+            servicePort: 3000
+      # Can contain mulitples
+      # kb get pods -o wide --sort-by="{.spec.nodeName}"

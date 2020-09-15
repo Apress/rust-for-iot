@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled -}}
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "iot.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iot.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: iot
+    app.kubernetes.io/part-of: {{ template "iot.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: tiller
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /apim       # <1>
+        backend:
+          serviceName: {{ template "mqtt.fullname" . }}
+          servicePort: {{ .Values.services.mqtt.port }}
+      - path: /api      # <2>
+        backend:
+          serviceName: {{ template "upload.fullname" . }}
+          servicePort: {{ .Values.services.upload.port }}
+      - path: /graph    # <3>
+        backend:
+          serviceName: {{ template "retrieval.fullname" . }}
+          servicePort: {{ .Values.services.retrieval.port }}
+{{- end -}}

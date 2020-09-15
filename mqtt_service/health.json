@@ -1,0 +1,7 @@
+{
+  "uuid":"9cf81814-1df0-49ca-9bac-0b32283eb29b",
+  "status": "Green",
+  "msg":"Here we define what could be going on with our application and its items.",
+  "timestamp":1562453750553,
+  "peripherals":[{"name":"Camera"},{"name":"Temp"}],
+}
